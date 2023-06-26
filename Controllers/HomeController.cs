@@ -25,6 +25,9 @@ namespace Moodify.Controllers
 
         public IActionResult Privacy()
         {
+
+
+
             return View();
         }
 
