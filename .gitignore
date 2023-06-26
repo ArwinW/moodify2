@@ -3,3 +3,8 @@
 ################################################################################
 
 /obj
+/bin/Debug/net5.0
+/.vs/Moodify/config
+/.vs/Moodify/DesignTimeBuild
+/.vs/moodify2/config
+/.vs
