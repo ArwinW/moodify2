@@ -31,19 +31,12 @@ namespace Moodify.db
 
         public bool FindUserByUsernameAndPassword(UserModel user)
         {
-
+                string sqlStatement = "SELECT * FROM users WHERE username = @username AND password = @password";
             using (MySqlConnection connection = this.GetConnection())
             {
-                string sql = "SELECT * FROM users WHERE username = @username AND password = @password";
-
-                using (MySqlCommand cmd = new(sql, connection))
-                {
-                    connection.Open();
-
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-
-                    }
+              
+                SqlCommand commmand = new SqlCommand(sqlStatement)
+                
                 }
             }
         }
