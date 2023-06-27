@@ -3,6 +3,11 @@
 ################################################################################
 
 /obj
+/bin/Debug/net5.0
+/.vs/Moodify/config
+/.vs/Moodify/DesignTimeBuild
+/.vs/moodify2/config
+/.vs
 /.vs/moodify2/v16/.suo
 /.vs
 /bin/Debug/net5.0
