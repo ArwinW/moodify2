@@ -1,0 +1,26 @@
+@model List<Moodify.Models.Log>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logs</title>
+</head>
+<body>
+    <h1>Logs</h1>
+    <table>
+        <tr>
+            <th>User ID</th>
+            <th>Song ID</th>
+            <th>Created At</th>
+        </tr>
+        @foreach (Moodify.Models.Log log in Model)
+        {
+            <tr>
+                <td>@log.UserId</td>
+                <td>@log.SongId</td>
+                <td>@log.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            </tr>
+        }
+    </table>
+</body>
+</html>
