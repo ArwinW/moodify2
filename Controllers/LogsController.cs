@@ -2,11 +2,20 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Moodify.Models;
+using Moodify.db;
 
 namespace YourApplication.Controllers
 {
     public class LogsController : Controller
     {
+        private readonly UserDataAccess dataAccess;
+
+        public LogsController()
+        {
+            // Initialize the data access class
+            dataAccess = new UserDataAccess();
+        }
+
         // GET: Logs
         public ActionResult Index()
         {
@@ -18,10 +27,10 @@ namespace YourApplication.Controllers
 
         private List<Log> GetLogsFromDatabase()
         {
-            string logs = "test";
-            Console.WriteLine(logs)
-            // This is a placeholder method, you should replace it with your own implementation
-            // Retrieve logs from the database and return a list of Log objects
+            var data = dataAccess.GetLogs();
+            // Implement your logic to retrieve logs from the database using the dataAccess object
+            // Return a list of Log objects
+            return data;
         }
     }
 }
