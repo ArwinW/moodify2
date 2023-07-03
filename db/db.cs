@@ -6,10 +6,11 @@ using System.Data;
 using Moodify.Models;
 using System.Data.SqlClient;
 using MongoDB.Driver.Core.Configuration;
+using System.Linq;
 
 namespace Moodify.db
 {
-    public class db
+    public class db : Database
     {
         private readonly IConfiguration configuration;
 
@@ -31,14 +32,33 @@ namespace Moodify.db
 
         public bool FindUserByUsernameAndPassword(UserModel user)
         {
-                string sqlStatement = "SELECT * FROM users WHERE username = @username AND password = @password";
+
+            bool succes = false;
+
+            string sqlStatement = "SELECT * FROM users WHERE username = @username AND password = @password";
             using (MySqlConnection connection = this.GetConnection())
             {
-              
-                SqlCommand commmand = new SqlCommand(sqlStatement)
-                
+
+                MySqlCommand command = new MySqlCommand(sqlStatement, connection);
+
+
+                command.Parameters.Add("@username", MySqlDbType.VarChar, 255).Value = user.UserName;
+                command.Parameters.Add("@password", MySqlDbType.VarChar, 255).Value = user.Password;
+
+                try
+                {
+                    string query = $"SELECT * FROM user WHERE username = '{username}'";
+                    IEnumerable<UserModel> user = this.ExecuteQuery<UserModel>(query);
+                    return user.FirstOrDefault();
                 }
+                catch
+                {
+
+                }
+
+
             }
         }
     }
 }
+
