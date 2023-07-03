@@ -7,7 +7,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-
+using System.Net.Http.Json;
+using System.Text.Json;
+using Amazon.Runtime;
+using System.Net;
 
 namespace Moodify.Controllers
 {
@@ -17,10 +20,10 @@ namespace Moodify.Controllers
         private readonly HttpClient _httpClient;
 
 
-        public HomeController(ILogger<HomeController> logger, HttpClient httpClient)
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("MyApi");
         }
 
         public IActionResult Index()
@@ -43,12 +46,46 @@ namespace Moodify.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string songTitle, string artistName)
+        public IActionResult SearchForm()
+        {
+            // Return the initial view for the search form
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchForm(string songTitle, string artistName)
         {
             // Logic to process the search parameters and retrieve search results
-            var searchResults = 1;// Your logic here
-            return View("SearchResults", searchResults);
+            var response = await _httpClient.GetAsync($"/api/Api?songTitle={songTitle}&artistName={artistName}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                if (jsonString.StartsWith("["))
+                {
+                    // The JSON response is an array of SongModel
+                    var songModels = JsonSerializer.Deserialize<List<SongModel>>(jsonString);
+                    return View("Search", songModels);
+                }
+                else
+                {
+                    // The JSON response is a single SongModel
+                    var songModel = JsonSerializer.Deserialize<SongModel>(jsonString);
+                    var songModels = new List<SongModel> { songModel };
+                    return View("Search", songModels);
+                }
+            }
+            else
+            {
+                // Handle other error scenarios
+                // Return an appropriate response or redirect to an error page
+
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
+
+
     }
 
 }

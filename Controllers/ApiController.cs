@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Moodify.Models;
+using System.Collections.Generic;
 
 namespace Moodify.Controllers
 {
@@ -7,16 +9,25 @@ namespace Moodify.Controllers
     public class ApiController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<SongModel> Get(string songTitle, string artistName)
         {
-            // Logic to retrieve data from your data source
-            var data = 1;// Retrieve data from your source (e.g., database)
+            // Logic to retrieve search results based on the provided parameters
+            // Use songTitle and artistName to query your data source (e.g., database) and get the matching results
 
-            return Ok(data); // Return the data as JSON
+            var searchResults = new SongModel { Id = 1, Description = "testD" , Name = "TestName"};// Perform the search and retrieve the matching results
+
+        return Ok(searchResults); // Return the search results as JSON
         }
 
+
         [HttpPost]
-      
+        public IActionResult Post([FromBody] UserModel model)
+        {
+            // Logic to process the posted data
+            // Example: Save the data to the database
+
+            return Created("api/yourcontroller", model); // Return a 201 Created response with the saved data
+        }
 
         // Other API endpoints and actions as needed
 
