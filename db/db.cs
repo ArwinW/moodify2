@@ -45,17 +45,18 @@ namespace Moodify.db
                 command.Parameters.Add("@username", MySqlDbType.VarChar, 255).Value = user.UserName;
                 command.Parameters.Add("@password", MySqlDbType.VarChar, 255).Value = user.Password;
 
-                try
-                {
-                    string query = $"SELECT * FROM user WHERE username = '{username}'";
-                    IEnumerable<UserModel> user = this.ExecuteQuery<UserModel>(query);
-                    return user.FirstOrDefault();
-                }
-                catch
-                {
+  //              try
+  //              {
+  //                  string query = $"SELECT * FROM user WHERE username = '{username}'";
+  //                  IEnumerable<UserModel> user = this.ExecuteQuery<UserModel>(query);
+  //                  return user.FirstOrDefault();
+  //              }
+  //              catch
+  //              {
+  //
+  //              }
 
-                }
-
+                return succes;
 
             }
         }

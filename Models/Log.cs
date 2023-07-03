@@ -4,8 +4,8 @@ namespace Moodify.Models
 {
     public class Log
     {
-        public int UserId { get; set; }
-        public int SongId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public int user_id { get; set; }
+        public int song_id { get; set; }
+        public DateTime created_at { get; set; }
     }
 }

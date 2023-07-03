@@ -16,13 +16,7 @@ namespace Moodify.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] YourModel model)
-        {
-            // Logic to process the posted data
-            // Example: Save the data to the database
-
-            return Created("api/yourcontroller", model); // Return a 201 Created response with the saved data
-        }
+      
 
         // Other API endpoints and actions as needed
 
