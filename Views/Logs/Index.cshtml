@@ -8,11 +8,6 @@
 <body>
     <h1>Logs</h1>
     <table>
-        <tr>
-            <th>User ID</th>
-            <th>Song ID</th>
-            <th>Created At</th>
-        </tr>
         @foreach (Moodify.Models.Log log in Model)
         {
             <p>@log.username searched for @log.songname at @log.created_at.ToString("yyyy-MM-dd HH:mm:ss")</p>

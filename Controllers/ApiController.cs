@@ -35,16 +35,16 @@ namespace Moodify.Controllers
         }
 
 
-        [HttpGet("/api/{tableName}")]
-        public IActionResult Get(string tableName)
-        {
+        //[HttpGet("/api/{tableName}")]
+        //public IActionResult Get(string tableName)
+        //{
             
-                    var username = dataAccess.GetUsernameById(log.user_id);
+        //            var username = dataAccess.GetUsernameById(log.user_id);
 
-                    return Ok(username);
+        //            return Ok(username);
 
 
-        }
+        //}
 
 
 

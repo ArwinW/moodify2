@@ -31,42 +31,49 @@ namespace Moodify.Controllers
             // Retrieve logs from the database or any other data source
             List<Log> logs = await GetLogsFromDatabase("logs");
 
-            return View(logs);
+             return View(logs);
         }
 
-        private async Task<List<Log>> GetLogsFromDatabase(string tableName)
+        private async Task<List<Log>> GetLogsFromDatabase(string tablename)
         {
-            var response = await httpClient.GetAsync($"api/{tableName}");
+            var response = await httpClient.GetAsync($"api/{tablename}");
             if (response.IsSuccessStatusCode)
             {
                 var logsJson = await response.Content.ReadAsStringAsync();
                 var logs = JsonSerializer.Deserialize<IEnumerable<Log>>(logsJson);
 
-            // Implement your logic to retrieve logs from the database using the dataAccess object
-            // Return a list of Log objects
+                // Implement your logic to retrieve logs from the database using the dataAccess object
+                // Return a list of Log objects
 
-            List<Log> logslist = new List<Log>();
+                List<Log> logslist = new List<Log>();
 
-            foreach (var log in data)
-            {
-                Log updatedLog = new Log
+                foreach (var log in logs)
                 {
-                    user_id = log.user_id,
-                    song_id = log.song_id,
-                    created_at = log.created_at
-                };
+                    Log updatedLog = new Log
+                    {
+                        user_id = log.user_id,
+                        song_id = log.song_id,
+                        created_at = log.created_at
+                    };
 
-                // Get the username for the current user_id
-                string username = dataAccess.GetUsernameById(log.user_id);
-                updatedLog.username = username;
+                    // Get the username for the current user_id
+                    string username = dataAccess.GetUsernameById(log.user_id);
+                    updatedLog.username = username;
 
-                string songname = dataAccess.GetSongById(log.song_id);
-                updatedLog.songname = songname;
+                    string songname = dataAccess.GetSongById(log.song_id);
+                    updatedLog.songname = songname;
 
-                logslist.Add(updatedLog);
+                    logslist.Add(updatedLog);
+                }
+
+                return logslist;
             }
-
-            return logslist;
+            else
+            {
+                // Handle the case when the API request is not successful
+                // For example, log the error or return an empty collection
+                return new List<Log>(); // or handle the error case accordingly
+            }
         }
     }
 }
