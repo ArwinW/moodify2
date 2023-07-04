@@ -33,9 +33,6 @@ namespace Moodify.Controllers
 
         public IActionResult Privacy()
         {
-
-
-
             return View();
         }
 
@@ -45,15 +42,8 @@ namespace Moodify.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpGet]
-        public IActionResult SearchForm()
-        {
-            // Return the initial view for the search form
-            return View();
-        }
-
         [HttpPost]
-        public async Task<IActionResult> SearchForm(string songTitle, string artistName)
+        public async Task<IActionResult> index(string songTitle, string artistName)
         {
             // Logic to process the search parameters and retrieve search results
             var response = await _httpClient.GetAsync($"/api/Api?songTitle={songTitle}&artistName={artistName}");
