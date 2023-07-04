@@ -13,7 +13,7 @@ namespace Moodify.Controllers
     public class LogsController : Controller
     {
         private readonly HttpClient httpClient;
-        private readonly Database dataAccess;
+        private readonly DataAccess dataAccess;
 
         public LogsController(HttpClient httpClient)
         {
@@ -22,7 +22,7 @@ namespace Moodify.Controllers
             this.httpClient.BaseAddress = new Uri("https://localhost:5001/"); // Set the base URI of your API here
 
             // Initialize the database access class
-            this.dataAccess = new Database();
+            this.dataAccess = new DataAccess();
         }
 
         // GET: Logs
