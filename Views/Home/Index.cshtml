@@ -3,14 +3,14 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welkom</h1>
+    <p class="lead">Vul titel en (optioneel) artiest in en zoek jouw nummer!</p>
+
+    @* Render the search form *@
+    <form method="post" action="/Home/index">
+        <input type="text" name="songTitle" placeholder="Titel" />
+        <input type="text" name="artistName" placeholder="Artiest" />
+        <button type="submit">Zoek</button>
+    </form>
+
 </div>
-
-@* Render the search form *@
-<form method="post" action="/Home/index">
-    <input type="text" name="songTitle" placeholder="Enter song title" />
-    <input type="text" name="artistName" placeholder="Enter artist name" />
-    <button type="submit">Search</button>
-</form>
-
