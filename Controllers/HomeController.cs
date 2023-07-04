@@ -19,7 +19,6 @@ namespace Moodify.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient _httpClient;
 
-
         public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
@@ -40,7 +39,7 @@ namespace Moodify.Controllers
         [HttpPost]
         public async Task<IActionResult> index(string songTitle, string artistName)
         {
-            // Logic to process the search parameters and retrieve search results
+            // Logic to p       rocess the search parameters and retrieve search results
             var response = await _httpClient.GetAsync($"/api/Api?songTitle={songTitle}&artistName={artistName}");
 
             if (response.IsSuccessStatusCode)
