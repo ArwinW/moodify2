@@ -1,28 +1,21 @@
 ﻿using Moodify.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Moodify.Data;
 
 namespace Moodify.Services
 {
     public class SecurityService
     {
-        List<UserModel> knownUsers = new List<UserModel>();
+        private readonly UserRepository _userRepository;
 
-        public SecurityService()
+        public SecurityService(UserRepository userRepository)
         {
-            knownUsers.Add(new UserModel { Id = 0, UserName = "test1", Password = "test1" });
-            knownUsers.Add(new UserModel { Id = 1, UserName = "test12", Password = "test12" });
-            knownUsers.Add(new UserModel { Id = 3, UserName = "test123", Password = "test123" });
-            knownUsers.Add(new UserModel { Id = 4, UserName = "test1234", Password = "test1234" });
+            _userRepository = userRepository;
         }
 
-        public bool IsValid(UserModel user)
+        public bool IsValid(UserModel userModel)
         {
-            //return true if found in the list
-            return knownUsers.Any(x => x.UserName == user.UserName && x.Password == user.Password);
+            var user = _userRepository.GetUserByUsernameAndPassword(userModel.UserName, userModel.Password);
+            return user != null;
         }
-
     }
 }
