@@ -46,9 +46,9 @@ namespace Moodify.db
             }
         }
 
-        public string GetUsernameById(int userId)
+        public string GetUsernameById(int user_id)
         {
-            string query = $"SELECT username FROM users WHERE id = {userId}";
+            string query = $"SELECT username FROM users WHERE id = {user_id}";
 
             using (IDbConnection connection = GetConnection())
             {
@@ -57,15 +57,15 @@ namespace Moodify.db
             }
         }
 
-        private string GetSongById(int userId)
-        {
-            string query = $"SELECT name FROM songs WHERE id = {songId}";
+        public string GetSongById(int song_id)
+    {
+        string query = $"SELECT name FROM songs WHERE id = {song_id}";
 
-            using (IDbConnection connection = GetConnection())
-            {
-                connection.Open();
-                return connection.QueryFirstOrDefault<string>(query);
-            }
+        using (IDbConnection connection = GetConnection())
+        {
+            connection.Open();
+            return connection.QueryFirstOrDefault<string>(query);
         }
+    }
     }
 }
