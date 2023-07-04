@@ -23,6 +23,10 @@ namespace Moodify
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient("MyApi", client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001/"); // Use the appropriate URL (HTTP or HTTPS) based on your needs
+            });
             services.AddControllersWithViews();
         }
 
@@ -46,18 +50,23 @@ namespace Moodify
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                endpoints.MapControllerRoute(
-                    name: "search",
-                    pattern: "Home/Search",
-                    defaults: new { controller = "Home", action = "Search" }
-                );
-            });
+        endpoints.MapControllerRoute(
+            name: "search",
+            pattern: "Home/Search",
+            defaults: new { controller = "Home", action = "Search" }
+        );
+
+        endpoints.MapControllerRoute(
+            name: "api",
+            pattern: "api/{controller}/{action}"
+        );
+    });
         }
     }
 }

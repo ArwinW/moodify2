@@ -15,9 +15,8 @@ namespace Moodify.db
             // string connectionString = configuration.GetConnectionString("Default");
             // todo: Get the connection string from config file
 
-            return new MySqlConnection("Server=localhost; User ID=root; Password=; Database=moodify");
+            return new MySqlConnection("Server=localhost;User=root;Password=;Database=moodify;Convert Zero Datetime=True");
         }
-
 
         public IEnumerable<T> GetAll<T>(string tablename)
         {

@@ -31,6 +31,20 @@ namespace Moodify.db
             }
         }
 
-        // Add more methods as per your requirements
+        public List<Log> GetLogs()
+        {
+            List<Log> logs = new List<Log>();
+            using (MySqlConnection connection = base.GetConnection())
+            {
+                string query = "SELECT * FROM logs";
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    // Execute the command and retrieve the logs from the database
+                    // Process the retrieved data and populate the logs list
+                }
+            }
+
+            return logs; // Return the populated list of Log objects
+        }
     }
 }
