@@ -19,7 +19,7 @@ namespace YourApplication.Controllers
         private List<Log> GetLogsFromDatabase()
         {
             string logs = "test";
-            Console.WriteLine(logs)
+            Console.WriteLine(logs);
             // This is a placeholder method, you should replace it with your own implementation
             // Retrieve logs from the database and return a list of Log objects
         }
