@@ -45,5 +45,27 @@ namespace Moodify.db
                 return connection.Execute(query);
             }
         }
+
+        public string GetUsernameById(int userId)
+        {
+            string query = $"SELECT username FROM users WHERE id = {userId}";
+
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                return connection.QueryFirstOrDefault<string>(query);
+            }
+        }
+
+        private string GetSongById(int userId)
+        {
+            string query = $"SELECT name FROM songs WHERE id = {songId}";
+
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                return connection.QueryFirstOrDefault<string>(query);
+            }
+        }
     }
 }
