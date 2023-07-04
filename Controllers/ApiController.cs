@@ -17,13 +17,23 @@ namespace Moodify.Controllers
             _database = new Database();
         }
 
-        [HttpGet("/api/logs")]
-        public IActionResult Get()
+        [HttpGet("/api/{tableName}")]
+        public IActionResult Get(string tableName)
         {
-            var logs = _database.GetAll<Log>("logs");
+            switch (tableName)
+            {
+                case "logs":
+                    var logs = _database.GetAll<Log>(tableName);
+                    return Ok(logs);
 
-            return Ok(logs);
+
+                // Add more cases for other table names if needed
+
+                default:
+                    return BadRequest("Invalid table name");
+            }
         }
+
 
         [HttpGet]
         public ActionResult<SongModel> Get(string songTitle, string artistName)

@@ -26,14 +26,14 @@ namespace Moodify.Controllers
         public async Task<ActionResult> IndexAsync()
         {
             // Retrieve logs from the database or any other data source
-            List<Log> logs = await GetLogsFromDatabase();
+            List<Log> logs = await GetLogsFromDatabase("logs");
 
             return View(logs);
         }
 
-        private async Task<List<Log>> GetLogsFromDatabase()
+        private async Task<List<Log>> GetLogsFromDatabase(string tableName)
         {
-            var response = await httpClient.GetAsync($"api/logs");
+            var response = await httpClient.GetAsync($"api/{tableName}");
             if (response.IsSuccessStatusCode)
             {
                 var logsJson = await response.Content.ReadAsStringAsync();
