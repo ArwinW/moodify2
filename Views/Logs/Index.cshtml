@@ -16,9 +16,9 @@
         @foreach (Moodify.Models.Log log in Model)
         {
             <tr>
-                <td>@log.UserId</td>
-                <td>@log.SongId</td>
-                <td>@log.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@log.user_id</td>
+                <td>@log.song_id</td>
+                <td>@log.created_at.ToString("yyyy-MM-dd HH:mm:ss")</td>
             </tr>
         }
     </table>
