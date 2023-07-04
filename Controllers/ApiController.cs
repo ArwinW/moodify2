@@ -10,11 +10,11 @@ namespace Moodify.Controllers
     [Route("api/[controller]")]
     public class ApiController : ControllerBase
     {
-        private readonly Database _database;
+        private readonly DataAccess _database;
 
         public ApiController()
         {
-            _database = new Database();
+            _database = new DataAccess();
         }
 
         [HttpGet("/api/{tableName}")]
@@ -33,6 +33,19 @@ namespace Moodify.Controllers
                     return BadRequest("Invalid table name");
             }
         }
+
+
+        //[HttpGet("/api/{tableName}")]
+        //public IActionResult Get(string tableName)
+        //{
+            
+        //            var username = dataAccess.GetUsernameById(log.user_id);
+
+        //            return Ok(username);
+
+
+        //}
+
 
 
         [HttpGet]

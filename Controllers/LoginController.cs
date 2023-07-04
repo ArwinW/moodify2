@@ -10,23 +10,34 @@ namespace Moodify.Controllers
 {
     public class LoginController : Controller
     {
-        public IActionResult Index()
+        private readonly SecurityService _securityService;
+
+        public LoginController()
         {
-            return View();
+            _securityService = new SecurityService();
         }
 
-        public IActionResult ProcessLogin(UserModel userModel) 
+        public IActionResult Index()
         {
-            SecurityService securityService = new SecurityService();
 
-            if (securityService.IsValid(userModel))
+            UserModel myModel = new UserModel();
+            
+
+            return View(myModel);
+        }
+
+        public IActionResult ProcessLogin(UserModel userModel)
+        {
+
+            if (_securityService.IsValid(userModel))
             {
                 return View("LoginSucces", userModel);
-            }else
+            }
+            else
             {
                 return View("LoginFailure", userModel);
             }
-            
         }
     }
+
 }
