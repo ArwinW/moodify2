@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Moodify.Models;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Moodify.db
 {
-    public class Database
+    public class DataAccess
     {
         public MySqlConnection GetConnection()
         {
@@ -43,6 +44,15 @@ namespace Moodify.db
             {
                 connection.Open();
                 return connection.Execute(query);
+            }
+        }
+        public UserModel GetUserByUsernameAndPassword(string username, string password)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                var sql = "SELECT * FROM users WHERE username = @Username AND password = @Password";
+                return connection.QuerySingleOrDefault<UserModel>(sql, new { Username = username, Password = password });
             }
         }
 
