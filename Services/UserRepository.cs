@@ -10,11 +10,6 @@ namespace Moodify.Data
     {
         private readonly string _connectionString;
 
-        public UserRepository(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-
         public UserModel GetUserByUsernameAndPassword(string username, string password)
         {
             using (var connection = new MySqlConnection(_connectionString))
