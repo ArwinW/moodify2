@@ -4,35 +4,42 @@ using Microsoft.AspNetCore.Mvc;
 using Moodify.Models;
 using Moodify.db;
 using Org.BouncyCastle.Utilities;
+using System.Net.Http;
 
-namespace YourApplication.Controllers
+using System.Threading.Tasks;
+using System.Text.Json;
+
+namespace Moodify.Controllers
 {
     public class LogsController : Controller
     {
-        private readonly Database dataAccess;
+        private readonly HttpClient httpClient;
 
-        public LogsController()
+        public LogsController(HttpClient httpClient)
         {
             // Initialize the data access class
-            dataAccess = new UserDataAccess();
+            this.httpClient = httpClient;
+            httpClient.BaseAddress = new Uri("https://localhost:5001/"); // Set the base URI of your API here
         }
 
         // GET: Logs
-        public ActionResult Index()
+        public async Task<ActionResult> IndexAsync()
         {
             // Retrieve logs from the database or any other data source
-            List<Log> logs = (List<Log>)GetLogsFromDatabase();
-                
-            }
+            List<Log> logs = await GetLogsFromDatabase();
+
             return View(logs);
         }
 
-    private IEnumerable<Log> GetLogsFromDatabase()
-    {
-        var tablename = "logs";
-        IEnumerable<Log> data = dataAccess.GetAll<Log>(tablename);
+        private IEnumerable<Log> GetLogsFromDatabase()
+        {
+            var tablename = "logs";
+            IEnumerable<Log> data = dataAccess.GetAll<Log>(tablename);
 
-        List<Log> logs = new List<Log>();
+            // Implement your logic to retrieve logs from the database using the dataAccess object
+            // Return a list of Log objects
+
+            List<Log> logslist = new List<Log>();
 
         foreach (var log in data)
         {
@@ -50,9 +57,17 @@ namespace YourApplication.Controllers
             string songname = GetSongById(log.song_id);
             updatedLog.songname = songname;
 
-            logs.Add(updatedLog);
+            logslist.Add(updatedLog);
         }
 
-        return logs;
+            return logslist;
+        }
+            else
+            {
+                // Handle the case when the API request is not successful
+                // For example, log the error or return an empty collection
+                return new List<Log>(); // or handle the error case accordingly
+            }
     }
+}
 }
