@@ -4,52 +4,64 @@ using Microsoft.AspNetCore.Mvc;
 using Moodify.Models;
 using Moodify.db;
 using Org.BouncyCastle.Utilities;
+using System.Net.Http;
 
-namespace YourApplication.Controllers
+using System.Threading.Tasks;
+using System.Text.Json;
+
+namespace Moodify.Controllers
 {
     public class LogsController : Controller
     {
-        private readonly Database dataAccess;
+        private readonly HttpClient httpClient;
 
-        public LogsController()
+        public LogsController(HttpClient httpClient)
         {
             // Initialize the data access class
-            dataAccess = new UserDataAccess();
+            this.httpClient = httpClient;
+            httpClient.BaseAddress = new Uri("https://localhost:5001/"); // Set the base URI of your API here
         }
 
         // GET: Logs
-        public ActionResult Index()
+        public async Task<ActionResult> IndexAsync()
         {
             // Retrieve logs from the database or any other data source
-            List<Log> logs = (List<Log>)GetLogsFromDatabase();
+            List<Log> logs = await GetLogsFromDatabase();
 
             return View(logs);
         }
 
-        private IEnumerable<Log> GetLogsFromDatabase()
+        private async Task<List<Log>> GetLogsFromDatabase()
         {
-            var tablename = "logs";
-            IEnumerable<Log> data = dataAccess.GetAll<Log>(tablename);
-
-            // Implement your logic to retrieve logs from the database using the dataAccess object
-            // Return a list of Log objects
-
-            List<Log> logs = new List<Log>();
-
-            foreach (var log in data)
+            var response = await httpClient.GetAsync($"api/logs");
+            if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"user_id: {log.user_id}, song_id: {log.song_id}, created_at: {log.created_at}");
-                Log updatedLog = new Log
+                var logsJson = await response.Content.ReadAsStringAsync();
+                var logs = JsonSerializer.Deserialize<IEnumerable<Log>>(logsJson);
+
+                List<Log> logslist = new List<Log>();
+
+                foreach (var log in logs)
                 {
-                    user_id = log.user_id,      // Set the UserId based on the actual value in the data
-                    song_id = log.song_id,      // Set the SongId based on the actual value in the data
-                    created_at = log.created_at // Set the CreatedAt based on the actual value in the data
-                };
+                    Console.WriteLine($"user_id: {log.user_id}, song_id: {log.song_id}, created_at: {log.created_at}");
+                    Log updatedLog = new Log
+                    {
+                        user_id = log.user_id,      // Set the UserId based on the actual value in the data
+                        song_id = log.song_id,      // Set the SongId based on the actual value in the data
+                        created_at = log.created_at // Set the CreatedAt based on the actual value in the data
+                    };
 
-                logs.Add(updatedLog);
+                    logslist.Add(updatedLog);
+                }
+
+                return logslist;
             }
-
-            return logs;
+            else
+            {
+                // Handle the case when the API request is not successful
+                // For example, log the error or return an empty collection
+                return new List<Log>(); // or handle the error case accordingly
+            }
         }
     }
 }
