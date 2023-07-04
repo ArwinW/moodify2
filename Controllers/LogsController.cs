@@ -5,7 +5,6 @@ using Moodify.Models;
 using Moodify.db;
 using Org.BouncyCastle.Utilities;
 using System.Net.Http;
-
 using System.Threading.Tasks;
 using System.Text.Json;
 
@@ -14,12 +13,16 @@ namespace Moodify.Controllers
     public class LogsController : Controller
     {
         private readonly HttpClient httpClient;
+        private readonly Database dataAccess;
 
         public LogsController(HttpClient httpClient)
         {
             // Initialize the data access class
             this.httpClient = httpClient;
-            httpClient.BaseAddress = new Uri("https://localhost:5001/"); // Set the base URI of your API here
+            this.httpClient.BaseAddress = new Uri("https://localhost:5001/"); // Set the base URI of your API here
+
+            // Initialize the database access class
+            this.dataAccess = new Database();
         }
 
         // GET: Logs
@@ -39,29 +42,31 @@ namespace Moodify.Controllers
                 var logsJson = await response.Content.ReadAsStringAsync();
                 var logs = JsonSerializer.Deserialize<IEnumerable<Log>>(logsJson);
 
-                List<Log> logslist = new List<Log>();
+            // Implement your logic to retrieve logs from the database using the dataAccess object
+            // Return a list of Log objects
 
-                foreach (var log in logs)
-                {
-                    Console.WriteLine($"user_id: {log.user_id}, song_id: {log.song_id}, created_at: {log.created_at}");
-                    Log updatedLog = new Log
-                    {
-                        user_id = log.user_id,      // Set the UserId based on the actual value in the data
-                        song_id = log.song_id,      // Set the SongId based on the actual value in the data
-                        created_at = log.created_at // Set the CreatedAt based on the actual value in the data
-                    };
+            List<Log> logslist = new List<Log>();
 
-                    logslist.Add(updatedLog);
-                }
-
-                return logslist;
-            }
-            else
+            foreach (var log in data)
             {
-                // Handle the case when the API request is not successful
-                // For example, log the error or return an empty collection
-                return new List<Log>(); // or handle the error case accordingly
+                Log updatedLog = new Log
+                {
+                    user_id = log.user_id,
+                    song_id = log.song_id,
+                    created_at = log.created_at
+                };
+
+                // Get the username for the current user_id
+                string username = dataAccess.GetUsernameById(log.user_id);
+                updatedLog.username = username;
+
+                string songname = dataAccess.GetSongById(log.song_id);
+                updatedLog.songname = songname;
+
+                logslist.Add(updatedLog);
             }
+
+            return logslist;
         }
     }
 }

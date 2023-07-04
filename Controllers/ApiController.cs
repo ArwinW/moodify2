@@ -35,6 +35,19 @@ namespace Moodify.Controllers
         }
 
 
+        [HttpGet("/api/{tableName}")]
+        public IActionResult Get(string tableName)
+        {
+            
+                    var username = dataAccess.GetUsernameById(log.user_id);
+
+                    return Ok(username);
+
+
+        }
+
+
+
         [HttpGet]
         public ActionResult<SongModel> Get(string songTitle, string artistName)
         {
