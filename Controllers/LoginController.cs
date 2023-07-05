@@ -76,7 +76,13 @@ namespace Moodify.Controllers
         [HttpPost]
         public IActionResult ProcessSignup(UserModel userModel)
         {
-            // Validate the user input if needed
+            // Check if the username already exists in the database
+            bool isUsernameTaken = _database.IsUsernameTaken(userModel.UserName);
+            if (isUsernameTaken)
+            {
+                ModelState.AddModelError("UserName", "Username is already taken.");
+                return View("Signup", userModel);
+            }
 
             // Insert the user into the database
             _database.InsertUser(userModel);

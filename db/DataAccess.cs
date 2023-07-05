@@ -86,5 +86,17 @@ namespace Moodify.db
                 return connection.Execute(sql, userModel);
             }
         }
+
+        public bool IsUsernameTaken(string username)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                var sql = "SELECT COUNT(*) FROM users WHERE username = @Username";
+                int count = connection.ExecuteScalar<int>(sql, new { Username = username });
+                return count > 0;
+            }
+        }
+
     }
 }
