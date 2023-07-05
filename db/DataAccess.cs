@@ -77,5 +77,14 @@ namespace Moodify.db
             return connection.QueryFirstOrDefault<string>(query);
         }
     }
+        public int InsertUser(UserModel userModel)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                var sql = "INSERT INTO users (username, password) VALUES (@Username, @Password)";
+                return connection.Execute(sql, userModel);
+            }
+        }
     }
 }

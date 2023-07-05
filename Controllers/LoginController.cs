@@ -65,7 +65,24 @@ namespace Moodify.Controllers
                 return RedirectToAction("LoginFailure");
             }
         }
+        public IActionResult Signup()
+        {
+            UserModel myModel = new UserModel();
+            return View(myModel);
+        }
 
+        [HttpPost]
+        public IActionResult ProcessSignup(UserModel userModel)
+        {
+            // Validate the user input if needed
+
+            // Insert the user into the database
+            _database.InsertUser(userModel);
+
+            // Redirect to the login page or another appropriate page
+            return RedirectToAction("Index");
+        }
     }
 
 }
+
