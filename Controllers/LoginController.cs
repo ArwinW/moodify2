@@ -40,17 +40,18 @@ namespace Moodify.Controllers
 
                 if (user != null)
                 {
+                    // Start the session
+                    HttpContext.Session.SetString("UserName", user.UserName);
+
                     if (user.IsAdmin == 1)
                     {
                         // Redirect to the admin page
-                        HttpContext.Session.SetString("UserRole", "Admin");
-                        return View();
+                        return RedirectToAction("Logs");
                     }
                     else
                     {
                         // Redirect to the normal user page
-                        HttpContext.Session.SetString("UserRole", "User");
-                        return View();
+                        return RedirectToAction("Home");
                     }
                 }
                 else
@@ -65,6 +66,7 @@ namespace Moodify.Controllers
                 return RedirectToAction("LoginFailure");
             }
         }
+
         public IActionResult Signup()
         {
             UserModel myModel = new UserModel();

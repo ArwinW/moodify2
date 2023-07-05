@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Session;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -23,6 +24,7 @@ namespace Moodify
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession();
             services.AddHttpClient("MyApi", client =>
             {
                 client.BaseAddress = new Uri("https://localhost:5001/"); // Use the appropriate URL (HTTP or HTTPS) based on your needs
@@ -33,6 +35,7 @@ namespace Moodify
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSession();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
