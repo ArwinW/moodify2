@@ -35,7 +35,9 @@ namespace Moodify
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
             app.UseSession();
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -52,8 +54,9 @@ namespace Moodify
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseMiddleware<SessionAuthMiddleware>();
 
-    app.UseEndpoints(endpoints =>
+            app.UseEndpoints(endpoints =>
     {
         endpoints.MapControllerRoute(
             name: "default",
