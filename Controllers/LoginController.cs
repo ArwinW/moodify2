@@ -47,12 +47,12 @@ namespace Moodify.Controllers
                     if (user.IsAdmin == 1)
                     {
                         // Redirect to the admin page
-                        return RedirectToAction("AdminPage");
+                        return RedirectToAction("Logs");
                     }
                     else
                     {
                         // Redirect to the normal user page
-                        return RedirectToAction("UserPage");
+                        return RedirectToAction("Home");
                     }
                 }
                 else
@@ -68,7 +68,30 @@ namespace Moodify.Controllers
             }
         }
 
+        public IActionResult Signup()
+        {
+            UserModel myModel = new UserModel();
+            return View(myModel);
+        }
 
+        [HttpPost]
+        public IActionResult ProcessSignup(UserModel userModel)
+        {
+            // Check if the username already exists in the database
+            bool isUsernameTaken = _database.IsUsernameTaken(userModel.UserName);
+            if (isUsernameTaken)
+            {
+                ModelState.AddModelError("UserName", "Username is already taken.");
+                return View("Signup", userModel);
+            }
+
+            // Insert the user into the database
+            _database.InsertUser(userModel);
+
+            // Redirect to the login page or another appropriate page
+            return RedirectToAction("Index");
+        }
     }
 
 }
+

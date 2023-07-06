@@ -5,6 +5,9 @@ namespace Moodify.Models
 {
     public class Log
     {
+        [JsonPropertyName("id")]
+        public int id { get; set; }
+
         [JsonPropertyName("user_id")]
         public int user_id { get; set; }
 
