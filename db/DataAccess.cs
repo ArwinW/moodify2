@@ -52,9 +52,10 @@ namespace Moodify.db
             {
                 connection.Open();
                 var sql = "SELECT * FROM users WHERE username = @Username AND password = @Password";
-                return connection.QuerySingleOrDefault<UserModel>(sql, new { Username = username, Password = password, IsAdmin = 1});
+                return connection.QuerySingleOrDefault<UserModel>(sql, new { Username = username, Password = password });
             }
         }
+
 
         public string GetUsernameById(int user_id)
         {

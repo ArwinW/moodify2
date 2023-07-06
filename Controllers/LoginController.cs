@@ -23,10 +23,7 @@ namespace Moodify.Controllers
 
         public IActionResult Index()
         {
-
             UserModel myModel = new UserModel();
-            
-
             return View(myModel);
         }
 
@@ -43,11 +40,12 @@ namespace Moodify.Controllers
                     // Start the session and store user information
                     HttpContext.Session.SetInt32("UserId", user.Id);
                     HttpContext.Session.SetString("UserName", user.UserName);
+                    HttpContext.Session.SetString("UserRole", user.IsAdmin == 1 ? "Admin" : "User");
 
                     if (user.IsAdmin == 1)
                     {
                         // Redirect to the admin page
-                        return Redirect("/Logs");
+                        return Redirect("/Logs/Index");
                     }
                     else
                     {
@@ -67,6 +65,10 @@ namespace Moodify.Controllers
                 return Redirect("/LoginFailure");
             }
         }
+
+
+        // Rest of the code...
+
 
         public IActionResult Signup()
         {
@@ -94,4 +96,4 @@ namespace Moodify.Controllers
     }
 
 }
-
+ 

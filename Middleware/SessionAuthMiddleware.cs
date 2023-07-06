@@ -14,14 +14,24 @@ public class SessionAuthMiddleware
     {
         var path = context.Request.Path;
         var loggedIn = context.Session.GetString("UserName") != null;
+        var isAdmin = context.Session.GetString("UserRole") == "Admin";
 
-        if (path.StartsWithSegments("/Login") || loggedIn)
+        if (path.StartsWithSegments("/Login") || (loggedIn && isAdmin))
         {
             await _next(context);
         }
+        else if (path.StartsWithSegments("/logs") && isAdmin)
+        {
+            await _next(context);
+        }
+        else if (!loggedIn)
+        {
+            context.Response.Redirect("/Login");
+        }
         else
         {
-            context.Response.Redirect("/Login/Index");
+            context.Response.Redirect("/Home"); // Redirect to the home page for non-admin users
         }
     }
+
 }
