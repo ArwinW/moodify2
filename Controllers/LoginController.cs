@@ -47,12 +47,12 @@ namespace Moodify.Controllers
                     if (user.IsAdmin == 1)
                     {
                         // Redirect to the admin page
-                        return RedirectToAction("Logs");
+                        return Redirect("/Logs");
                     }
                     else
                     {
                         // Redirect to the normal user page
-                        return RedirectToAction("Home");
+                        return Redirect("Home");
                     }
                 }
                 else
