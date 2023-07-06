@@ -51,19 +51,19 @@ namespace Moodify.Controllers
                     else
                     {
                         // Redirect to the normal user page
-                        return Redirect("Home");
+                        return Redirect("/Home");
                     }
                 }
                 else
                 {
                     // User not found, redirect to login failure page
-                    return RedirectToAction("LoginFailure");
+                    return Redirect("/LoginFailure");
                 }
             }
             else
             {
                 // Invalid credentials, redirect to login failure page
-                return RedirectToAction("LoginFailure");
+                return Redirect("/LoginFailure");
             }
         }
 
