@@ -40,7 +40,8 @@ namespace Moodify.Controllers
 
                 if (user != null)
                 {
-                    // Start the session
+                    // Start the session and store user information
+                    HttpContext.Session.SetInt32("UserId", user.Id);
                     HttpContext.Session.SetString("UserName", user.UserName);
 
                     if (user.IsAdmin == 1)
