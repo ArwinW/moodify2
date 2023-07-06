@@ -12,6 +12,10 @@ public class SessionAuthMiddleware
 
     public async Task Invoke(HttpContext context)
     {
+        if (!context.Request.Path.StartsWithSegments("/api"))
+        {
+            var path = context.Request.Path;
+            var loggedIn = context.Session.GetString("UserName") != null;
         var path = context.Request.Path;
         var loggedIn = context.Session.GetString("UserName") != null;
         var isAdmin = context.Session.GetString("UserRole") == "Admin";
