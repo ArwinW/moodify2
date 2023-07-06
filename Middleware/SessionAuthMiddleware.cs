@@ -12,16 +12,23 @@ public class SessionAuthMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        var path = context.Request.Path;
-        var loggedIn = context.Session.GetString("UserName") != null;
-
-        if (path.StartsWithSegments("/Login") || loggedIn)
+        if (!context.Request.Path.StartsWithSegments("/api"))
         {
-            await _next(context);
+            var path = context.Request.Path;
+            var loggedIn = context.Session.GetString("UserName") != null;
+
+            if (path.StartsWithSegments("/Login") || loggedIn)
+            {
+                await _next(context);
+            }
+            else
+            {
+                context.Response.Redirect("/Login/Index");
+            }
         }
         else
         {
-            context.Response.Redirect("/Login/Index");
+            await _next(context);
         }
     }
 }
