@@ -52,7 +52,7 @@ namespace Moodify.db
             {
                 connection.Open();
                 var sql = "SELECT * FROM users WHERE username = @Username AND password = @Password";
-                return connection.QuerySingleOrDefault<UserModel>(sql, new { Username = username, Password = password });
+                return connection.QuerySingleOrDefault<UserModel>(sql, new { Username = username, Password = password, IsAdmin = 1});
             }
         }
 
@@ -77,5 +77,26 @@ namespace Moodify.db
             return connection.QueryFirstOrDefault<string>(query);
         }
     }
+        public int InsertUser(UserModel userModel)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                var sql = "INSERT INTO users (username, password) VALUES (@Username, @Password)";
+                return connection.Execute(sql, userModel);
+            }
+        }
+
+        public bool IsUsernameTaken(string username)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                var sql = "SELECT COUNT(*) FROM users WHERE username = @Username";
+                int count = connection.ExecuteScalar<int>(sql, new { Username = username });
+                return count > 0;
+            }
+        }
+
     }
 }

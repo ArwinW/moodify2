@@ -19,7 +19,6 @@ namespace Moodify.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient _httpClient;
 
-
         public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
@@ -27,11 +26,6 @@ namespace Moodify.Controllers
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }
@@ -45,7 +39,7 @@ namespace Moodify.Controllers
         [HttpPost]
         public async Task<IActionResult> index(string songTitle, string artistName)
         {
-            // Logic to process the search parameters and retrieve search results
+            // Logic to process the search parameters and retrieve search results 
             var response = await _httpClient.GetAsync($"/api/Api?songTitle={songTitle}&artistName={artistName}");
 
             if (response.IsSuccessStatusCode)
@@ -55,14 +49,14 @@ namespace Moodify.Controllers
                 if (jsonString.StartsWith("["))
                 {
                     // The JSON response is an array of SongModel
-                    var songModels = JsonSerializer.Deserialize<List<SongModel>>(jsonString);
+                    var songModels = JsonSerializer.Deserialize<List<Track>>(jsonString);
                     return View("Search", songModels);
                 }
                 else
                 {
                     // The JSON response is a single SongModel
-                    var songModel = JsonSerializer.Deserialize<SongModel>(jsonString);
-                    var songModels = new List<SongModel> { songModel };
+                    var songModel = JsonSerializer.Deserialize<Track>(jsonString);
+                    var songModels = new List<Track> { songModel };
                     return View("Search", songModels);
                 }
             }

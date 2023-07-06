@@ -2,7 +2,12 @@
 using Moodify.Models;
 using System.Collections.Generic;
 using Moodify.db;
-
+using System.Net.Http;
+using System;
+using System.Threading.Tasks;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace Moodify.Controllers
 {
@@ -11,9 +16,12 @@ namespace Moodify.Controllers
     public class ApiController : ControllerBase
     {
         private readonly DataAccess _database;
+        private readonly HttpClient _httpClient;
 
         public ApiController()
         {
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri("https://api.musixmatch.com/ws/1.1/");
             _database = new DataAccess();
         }
 
@@ -34,29 +42,51 @@ namespace Moodify.Controllers
             }
         }
 
-
-        //[HttpGet("/api/{tableName}")]
-        //public IActionResult Get(string tableName)
-        //{
-            
-        //            var username = dataAccess.GetUsernameById(log.user_id);
-
-        //            return Ok(username);
-
-
-        //}
-
-
-
         [HttpGet]
-        public ActionResult<SongModel> Get(string songTitle, string artistName)
+        public async Task<ActionResult<Track>> Get(string songTitle, string artistName)
         {
-            // Logic to retrieve search results based on the provided parameters
-            // Use songTitle and artistName to query your data source (e.g., database) and get the matching results
+            // Prepare the API request URL with the required parameters
+            string requestUrl = $"track.search?q_track={Uri.EscapeDataString(songTitle)}&q_artist={Uri.EscapeDataString(artistName)}&apikey=151f5eaedfddb9c774a269dfe70ff766";
 
-            var searchResults = new SongModel { Id = 1, Description = "testD", Name = "TestName" };// Perform the search and retrieve the matching results
+            // Send the API request
+            HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
 
-            return Ok(searchResults); // Return the search results as JSON
+            // Process the API response
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the response content as JSON
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonSerializer.Deserialize<RootObject>(responseContent);
+
+                var trackList = responseObject.Message.Body.TrackList;
+                var songModels = new List<Track>();
+
+                foreach (var track in trackList)
+                {
+                    var songModel = new Track
+                    {
+                        TrackId = track.Track.TrackId,
+                        TrackName = track.Track.TrackName,
+                        AlbumId = track.Track.AlbumId,
+                        AlbumName = track.Track.AlbumName,
+                        ArtistId = track.Track.ArtistId,
+                        ArtistName = track.Track.ArtistName,
+                        TrackShareUrl = track.Track.TrackShareUrl,
+                        TrackEditUrl = track.Track.TrackEditUrl,
+                        PrimaryGenres = track.Track.PrimaryGenres
+                    };
+
+                    songModels.Add(songModel);
+                }
+
+                return Ok(songModels); // Return the search results as JSON
+            }
+            else
+            {
+                // Handle the case when the API request is not successful
+                return BadRequest(); // or handle the error case accordingly
+            }
         }
+
     }
 }
