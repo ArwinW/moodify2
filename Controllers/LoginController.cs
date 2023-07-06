@@ -52,7 +52,7 @@ namespace Moodify.Controllers
                     else
                     {
                         // Redirect to the normal user page
-                        return Redirect("Home");
+                        return Redirect("/Home/Index");
                     }
                 }
                 else
