@@ -2,14 +2,42 @@
 
 <!DOCTYPE html>
 <html>
+<style>
+    .odd-row {
+        background-color: #f2f2f2; 
+    }
+
+    .even-row {
+        background-color: #ffffff;
+    }
+
+    table {
+        border: solid;
+        border-color: grey;
+        border-width: 1px;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("tr:odd").addClass("odd-row");
+        $("tr:even").addClass("even-row");
+    });
+</script>
 <head>
     <title>Logs</title>
 </head>
 <body>
     <h1>Logs</h1>
-        @foreach (Moodify.Models.Log log in Model)
-        {
-            <p>@log.username searched for @log.songname at @log.created_at.ToString("yyyy-MM-dd HH:mm:ss")</p>
-        }
+    <table>
+        <tbody>
+            @foreach (Moodify.Models.Log log in Model)
+            {
+                <tr>
+                    <td>@log.username searched for @log.songname at @log.created_at.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </body>
 </html>
