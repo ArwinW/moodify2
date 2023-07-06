@@ -30,15 +30,18 @@ public class SessionAuthMiddleware
             {
                 context.Response.Redirect("/Login");
             }
-            else
+            else if (!path.StartsWithSegments("/Home")) // Skip the "/Home" path when logged in
             {
                 context.Response.Redirect("/Home"); // Redirect to the home page for non-admin users
+            }
+            else
+            {
+                await _next(context);
             }
         }
         else
         {
             await _next(context);
         }
-
     }
 }
