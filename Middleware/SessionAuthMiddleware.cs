@@ -35,6 +35,10 @@ public class SessionAuthMiddleware
                 context.Response.Redirect("/Home"); // Redirect to the home page for non-admin users
             }
         }
+        else
+        {
+            await _next(context);
+        }
 
     }
 }
