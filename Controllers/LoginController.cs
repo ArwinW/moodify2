@@ -58,13 +58,13 @@ namespace Moodify.Controllers
                 else
                 {
                     // User not found, redirect to login failure page
-                    return RedirectToAction("LoginFailure");
+                    return Redirect("/LoginFailure");
                 }
             }
             else
             {
                 // Invalid credentials, redirect to login failure page
-                return RedirectToAction("LoginFailure");
+                return Redirect("/LoginFailure");
             }
         }
 
