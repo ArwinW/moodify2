@@ -90,12 +90,12 @@ namespace Moodify.Controllers
                     // Fetch 10 tracks with the same artist
                     var relatedTracksByArtist = await GetRelatedTracksByArtist(artistId, 10);
                     track.relatedTracksByArtist = relatedTracksByArtist;
-                
 
-                // Now each track in songModels will have the related tracks by genre and artist
 
-                // Access the related tracks from the Musixmatch API response
-            
+                    // Now each track in songModels will have the related tracks by genre and artist
+
+                    // Access the related tracks from the Musixmatch API response
+
                     // Assign the related tracks to the corresponding track in songModels
                     var correspondingTrack = songModels.FirstOrDefault(t => t.TrackId == track.TrackId);
                     if (correspondingTrack != null)
@@ -105,7 +105,13 @@ namespace Moodify.Controllers
                     }
                 }
 
-                return songModels;
+                var DataAccesFunction = _database.InsertLogs(songTitle);
+                if (DataAccesFunction = true)
+                {
+                    return songModels;
+
+                }
+
             }
 
             // Return an empty list if the API request was not successful

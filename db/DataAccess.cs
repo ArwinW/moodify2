@@ -99,5 +99,10 @@ namespace Moodify.db
             }
         }
 
+        public bool InsertLogs(string searchresult)
+        {
+            return false;
+        }
+
     }
 }
