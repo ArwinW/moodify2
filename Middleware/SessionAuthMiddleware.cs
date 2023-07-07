@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 public class SessionAuthMiddleware
@@ -30,7 +31,7 @@ public class SessionAuthMiddleware
             {
                 context.Response.Redirect("/Login");
             }
-            else if (!path.StartsWithSegments("/Home")) // Skip the "/Home" path when logged in
+            else if (!path.StartsWithSegments("/Home") && (!loggedIn)) // Skip the "/Home" path when logged in
             {
                 context.Response.Redirect("/Home"); // Redirect to the home page for non-admin users
             }
