@@ -3,7 +3,13 @@ using System.Text.Json.Serialization;
 
 namespace Moodify.Models
 {
-    public class PrimaryGenre
+    public class PrimaryGenres
+    {
+        [JsonPropertyName("music_genre_list")]
+        public List<MusicGenreList> MusicGenreList { get; set; }
+    }
+
+    public class MusicGenreList
     {
         [JsonPropertyName("music_genre")]
         public MusicGenre MusicGenre { get; set; }
@@ -25,6 +31,9 @@ namespace Moodify.Models
 
         [JsonPropertyName("music_genre_vanity")]
         public string MusicGenreVanity { get; set; }
+
+        [JsonPropertyName("music_genre_list")]
+        public List<MusicGenreList> RelatedTracks { get; set; } // Modify the property type to List<MusicGenreList>
     }
 
     public class Track
@@ -60,7 +69,15 @@ namespace Moodify.Models
         public string UpdatedTime { get; set; }
 
         [JsonPropertyName("primary_genres")]
-        public PrimaryGenre PrimaryGenres { get; set; }
+        public PrimaryGenres PrimaryGenres { get; set; }
+
+        // Additional properties for related tracks
+        [JsonPropertyName("relatedTracksByGenre")]
+
+        public List<Track> relatedTracksByGenre { get; set; }
+        [JsonPropertyName("relatedTracksByArtist")]
+
+        public List<Track> relatedTracksByArtist { get; set; }
     }
 
     public class TrackList

@@ -1,0 +1,29 @@
+﻿@model SongDetailsViewModel
+
+<div>
+    <strong>@Model.Song.TrackName</strong><br>
+    Artist: @Model.Song.ArtistName<br>
+    Album: @Model.Song.AlbumName<br>
+    Genre: @Model.Song.PrimaryGenres?.MusicGenreList?.FirstOrDefault()?.MusicGenre?.MusicGenreName
+</div>
+
+<hr>
+
+<h3>Nummers met hetzelfde genre:</h3>
+<ul>
+    @foreach (var song in Model.relatedTracksByGenre)
+    {
+        <li>@song</li>
+    }
+
+</ul>
+
+<h3>Nummers met dezelfde artiest:</h3>
+<ul>
+    @foreach (var song in Model.relatedTracksByArtist)
+    {
+        <li>@song</li>
+    }
+
+
+</ul>

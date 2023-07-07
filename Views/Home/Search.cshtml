@@ -1,19 +1,47 @@
-﻿@model List<Track>
+﻿@using Newtonsoft.Json;
+@model List<Track>
 
-<h2>Search Results</h2>
+
+
+<h2>Zoekresultaten</h2>
+
 @if (Model.Count > 0)
 {
     <ul>
         @foreach (var song in Model)
         {
+            var relatedTracksByGenre = new List<string>();
+            var relatedTracksByArtist = new List<string>();
+            foreach(var trackName in song.relatedTracksByGenre)
+            {
+                relatedTracksByGenre.Add(trackName.TrackName);
+            }
+            foreach (var trackName in song.relatedTracksByArtist)
+            {
+                relatedTracksByArtist.Add(trackName.TrackName);
+            }
+
             <li>
-                <strong>@song.TrackName</strong><br>
+                <strong>
+                    <a href="@Url.Action("Details", "Home", new
+        {
+            id = song.TrackId,
+            name = song.TrackName,
+            albumName = song.AlbumName,
+            artist = song.ArtistName,
+            genre = song.PrimaryGenres?.MusicGenreList?.FirstOrDefault()?.MusicGenre?.MusicGenreName,
+            relatedTracksByGenre = relatedTracksByGenre,
+            relatedTracksByArtist = relatedTracksByArtist
+        })">@song.TrackName</a>
+                </strong><br>
                 Artist: @song.ArtistName<br>
                 Album: @song.AlbumName<br>
-                Genre: @song.PrimaryGenres?.MusicGenre?.MusicGenreName
+                Genre: @song.PrimaryGenres?.MusicGenreList?.FirstOrDefault()?.MusicGenre?.MusicGenreName
             </li>
         }
+
     </ul>
+
 }
 else
 {
