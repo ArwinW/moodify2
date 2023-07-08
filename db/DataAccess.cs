@@ -1,6 +1,9 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moodify.Models;
 using MySql.Data.MySqlClient;
+using NuGet.Protocol.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -69,15 +72,15 @@ namespace Moodify.db
         }
 
         public string GetSongById(int song_id)
-    {
-        string query = $"SELECT name FROM songs WHERE id = {song_id}";
-
-        using (IDbConnection connection = GetConnection())
         {
-            connection.Open();
-            return connection.QueryFirstOrDefault<string>(query);
+            string query = $"SELECT name FROM songs WHERE id = {song_id}";
+
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                return connection.QueryFirstOrDefault<string>(query);
+            }
         }
-    }
         public int InsertUser(UserModel userModel)
         {
             using (IDbConnection connection = GetConnection())
@@ -98,6 +101,23 @@ namespace Moodify.db
                 return count > 0;
             }
         }
- 
+
+        public void InsertLog(int songId, HttpContext httpContext)
+        {
+            int? userId = httpContext.Session.GetInt32("UserId");
+
+            if (userId.HasValue)
+            {
+                using (IDbConnection connection = GetConnection())
+                {
+                    connection.Open();
+                    var sql = "INSERT INTO logs (user_id, song_id) VALUES (@UserId, @SongId)";
+                    connection.Execute(sql, new { UserId = userId.Value, SongId = songId });
+                }
+            }
+
+            // Other controller methods...
+        }
     }
-}
+
+    }

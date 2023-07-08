@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Moodify.Models;
+using System.Linq;
 
 namespace Moodify.Controllers
 {
@@ -41,12 +43,11 @@ namespace Moodify.Controllers
                     return BadRequest("Invalid table name");
             }
         }
-
         [HttpGet]
-        public async Task<ActionResult<Track>> Get(string songTitle, string artistName)
+        public async Task<ActionResult<List<Track>>> Get(string songTitle, string artistName)
         {
             // Prepare the API request URL with the required parameters
-            string requestUrl = $"track.search?q_track={Uri.EscapeDataString(songTitle)}&q_artist={Uri.EscapeDataString(artistName)}&apikey=151f5eaedfddb9c774a269dfe70ff766";
+            string requestUrl = $"track.search?q_track={Uri.EscapeDataString(songTitle)}&q_artist={Uri.EscapeDataString(artistName)}&apikey=151f5eaedfddb9c774a269dfe70ff766&f_has_lyrics=true&s_track_rating=desc&page_size=10";
 
             // Send the API request
             HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
@@ -58,35 +59,105 @@ namespace Moodify.Controllers
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var responseObject = JsonSerializer.Deserialize<RootObject>(responseContent);
 
-                var trackList = responseObject.Message.Body.TrackList;
-                var songModels = new List<Track>();
+                var trackList = responseObject.Message.Body.TrackList.Select(t => t.Track).ToList();
 
-                foreach (var track in trackList)
+                var songModels = trackList.Select(track => new Track
                 {
-                    var songModel = new Track
+                    TrackId = track.TrackId,
+                    TrackName = track.TrackName,
+                    AlbumId = track.AlbumId,
+                    AlbumName = track.AlbumName,
+                    ArtistId = track.ArtistId,
+                    ArtistName = track.ArtistName,
+                    TrackShareUrl = track.TrackShareUrl,
+                    TrackEditUrl = track.TrackEditUrl,
+                    PrimaryGenres = new PrimaryGenres
                     {
-                        TrackId = track.Track.TrackId,
-                        TrackName = track.Track.TrackName,
-                        AlbumId = track.Track.AlbumId,
-                        AlbumName = track.Track.AlbumName,
-                        ArtistId = track.Track.ArtistId,
-                        ArtistName = track.Track.ArtistName,
-                        TrackShareUrl = track.Track.TrackShareUrl,
-                        TrackEditUrl = track.Track.TrackEditUrl,
-                        PrimaryGenres = track.Track.PrimaryGenres
-                    };
+                        MusicGenreList = track.PrimaryGenres?.MusicGenreList ?? new List<MusicGenreList>()
+                    },
+                }).ToList();
 
-                    songModels.Add(songModel);
+                // Fetch related tracks by genre and artist for each track
+                foreach (var track in songModels)
+                {
+                    var genreId = track.PrimaryGenres.MusicGenreList.FirstOrDefault()?.MusicGenre.MusicGenreId;
+                    var artistId = track.ArtistId;
+
+                    // Fetch 10 tracks with the same genre
+                    var relatedTracksByGenre = await GetRelatedTracksByGenre(genreId, 10);
+                    track.relatedTracksByGenre = relatedTracksByGenre;
+
+                    // Fetch 10 tracks with the same artist
+                    var relatedTracksByArtist = await GetRelatedTracksByArtist(artistId, 10);
+                    track.relatedTracksByArtist = relatedTracksByArtist;
+
+
+                    // Now each track in songModels will have the related tracks by genre and artist
+
+                    // Access the related tracks from the Musixmatch API response
+
+                    // Assign the related tracks to the corresponding track in songModels
+                    var correspondingTrack = songModels.FirstOrDefault(t => t.TrackId == track.TrackId);
+                    if (correspondingTrack != null)
+                    {
+                        correspondingTrack.relatedTracksByGenre = relatedTracksByGenre;
+                        correspondingTrack.relatedTracksByArtist = relatedTracksByArtist;
+                    }
                 }
 
-                return Ok(songModels); // Return the search results as JSON
+                _database.InsertLog(songModels.TrackId, HttpContext);
             }
-            else
-            {
-                // Handle the case when the API request is not successful
-                return BadRequest(); // or handle the error case accordingly
-            }
+
+            // Return an empty list if the API request was not successful
+            return new List<Track>();
         }
 
+        private async Task<List<Track>> GetRelatedTracksByGenre(int? genreId, int pageSize)
+        {
+            // Prepare the API request URL with the required parameters
+            string requestUrl = $"track.search?f_music_genre_id={genreId}&s_track_rating=desc&page_size={pageSize}&apikey=151f5eaedfddb9c774a269dfe70ff766";
+
+            // Send the API request
+            HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+
+            // Process the API response
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the response content as JSON
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonSerializer.Deserialize<RootObject>(responseContent);
+
+                var trackList = responseObject.Message.Body.TrackList.Select(t => t.Track).ToList();
+
+                return trackList;
+            }
+
+            // Return an empty list if the API request was not successful
+            return new List<Track>();
+        }
+
+        private async Task<List<Track>> GetRelatedTracksByArtist(int artistId, int pageSize)
+        {
+            // Prepare the API request URL with the required parameters
+            string requestUrl = $"track.search?f_artist_id={artistId}&s_track_rating=desc&page_size={pageSize}&apikey=151f5eaedfddb9c774a269dfe70ff766";
+
+            // Send the API request
+            HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+
+            // Process the API response
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the response content as JSON
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonSerializer.Deserialize<RootObject>(responseContent);
+
+                var trackList = responseObject.Message.Body.TrackList.Select(t => t.Track).ToList();
+
+                return trackList;
+            }
+
+            // Return an empty list if the API request was not successful
+            return new List<Track>();
+        }
     }
 }
