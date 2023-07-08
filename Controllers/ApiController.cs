@@ -105,17 +105,7 @@ namespace Moodify.Controllers
                     }
                 }
 
-                var DataAccesFunction = _database.InsertLogs(songTitle);
-                if (DataAccesFunction = true)
-                {
-                    return songModels;
-
-                    string query = "";
-
-                    DataAccess.ExecuteQuery(query);
-
-                }
-
+                _database.InsertLog(songModels.TrackId, HttpContext);
             }
 
             // Return an empty list if the API request was not successful

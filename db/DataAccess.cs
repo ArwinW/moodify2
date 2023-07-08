@@ -102,14 +102,18 @@ namespace Moodify.db
             }
         }
 
-        public void InsertLog(int userId, string searchresults)
+        public void InsertLog(int songId, HttpContext httpContext)
         {
-            int? userId = HttpContext.Session.("UserId");
-            using (IDbConnection connection = GetConnection())
+            int? userId = httpContext.Session.GetInt32("UserId");
+
+            if (userId.HasValue)
             {
-                connection.Open();
-                var sql = "INSERT INTO logs (user_id, song_id) VALUES ({userId}, {songId})";
-               connection.Execute(sql);
+                using (IDbConnection connection = GetConnection())
+                {
+                    connection.Open();
+                    var sql = "INSERT INTO logs (user_id, song_id) VALUES (@UserId, @SongId)";
+                    connection.Execute(sql, new { UserId = userId.Value, SongId = songId });
+                }
             }
 
             // Other controller methods...
