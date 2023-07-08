@@ -99,5 +99,18 @@ namespace Moodify.db
             }
         }
 
+        public void InsertSong(string songName, string albumName, string artistName)//, string genre, string mood
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                //              HIER MOET   <(name, album, artist, genre, mood)> STAAN
+                var sql = "INSERT INTO songs (name, album, artist) VALUES (@SongName, @AlbumName, @ArtistName";//, @Genre, @Mood)
+                connection.Execute(sql, new { SongName = songName, AlbumName = albumName});//, ArtistName = artistName, Genre = genre
+            }
+        }
+
+        
+
     }
 }
