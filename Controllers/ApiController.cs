@@ -110,6 +110,10 @@ namespace Moodify.Controllers
                 {
                     return songModels;
 
+                    string query = "";
+
+                    DataAccess.ExecuteQuery(query);
+
                 }
 
             }
