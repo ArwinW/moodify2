@@ -77,9 +77,6 @@ namespace Moodify.Controllers
                     };
 
                     songModels.Add(songModel);
-
-                    // Insert the song into your database
-                    _database.InsertSong(songModel.TrackName, songModel.AlbumName, songModel.ArtistName);//, songModel.PrimaryGenres, songModel.Mood
                 }
 
                 return Ok(songModels); // Return the search results as JSON
@@ -90,7 +87,6 @@ namespace Moodify.Controllers
                 return BadRequest(); // or handle the error case accordingly
             }
         }
-
 
     }
 }
