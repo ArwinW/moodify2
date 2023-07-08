@@ -20,6 +20,8 @@ namespace Moodify.Controllers
             _securityService = new SecurityService();
             _database = new DataAccess();
         }
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
 
         public IActionResult Index()
         {

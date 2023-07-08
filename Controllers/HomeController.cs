@@ -16,11 +16,15 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly HttpClient _httpClient;
     private List<Track> songModels; // Add this line to declare the songModels list
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
+
+    public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
     {
         _logger = logger;
         _httpClient = httpClientFactory.CreateClient("MyApi");
+        _httpContextAccessor = httpContextAccessor;
+
     }
 
     public IActionResult Index()
@@ -37,8 +41,13 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> Index(string songTitle, string artistName) // Update the method name to "Index"
     {
+        HttpContext context = _httpContextAccessor.HttpContext;
+        ISession session = context.Session;
+
+        // Set the session value
+        int? userId = session.GetInt32("UserId");
         // Logic to process the search parameters and retrieve search results 
-        var response = await _httpClient.GetAsync($"/api/Api?songTitle={songTitle}&artistName={artistName}");
+        var response = await _httpClient.GetAsync($"/api/Api?songTitle={songTitle}&artistName={artistName}&userId={userId}");
 
         if (response.IsSuccessStatusCode)
         {

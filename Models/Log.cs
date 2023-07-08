@@ -20,7 +20,7 @@ namespace Moodify.Models
         [JsonPropertyName("username")]
         public string username { get; set; }
 
-        [JsonPropertyName("songname")]
-        public string songname { get; set; }
+        [JsonPropertyName("song_title")]
+        public string song_title { get; set; }
     }
 }

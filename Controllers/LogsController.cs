@@ -7,6 +7,7 @@ using Org.BouncyCastle.Utilities;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Security.Policy;
 
 namespace Moodify.Controllers
 {
@@ -53,15 +54,16 @@ namespace Moodify.Controllers
                     {
                         user_id = log.user_id,
                         song_id = log.song_id,
-                        created_at = log.created_at
+                        created_at = log.created_at,
+                        song_title = log.song_title,
+
                     };
 
                     // Get the username for the current user_id
                     string username = dataAccess.GetUsernameById(log.user_id);
                     updatedLog.username = username;
 
-                    string songname = dataAccess.GetSongById(log.song_id);
-                    updatedLog.songname = songname;
+
 
                     logslist.Add(updatedLog);
                 }

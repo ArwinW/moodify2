@@ -201,8 +201,47 @@ namespace Moodify.db
                 }
             }
         }
+        public List<string> GetAllSongTitles()
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                var sql = "SELECT name FROM songs";
+                return connection.Query<string>(sql).ToList();
+            }
+        }
+        public void InsertLog(int? userId, string songTitle, DateTime currentTime)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        var logSql = @"INSERT INTO logs (user_id, song_title, created_at) 
+                                    SELECT @user_id, @song_title, @created_at
+                                    FROM dual";
+                        var logParams = new
+                        {
+                            user_id = userId,
+                            song_title = songTitle,
+                            created_at = currentTime
 
+                        };
+                        connection.Execute(logSql, logParams);
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+
+
+        }
 
     }
-
 }

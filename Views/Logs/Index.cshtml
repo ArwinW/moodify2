@@ -34,7 +34,7 @@
             @foreach (Moodify.Models.Log log in Model)
             {
                 <tr>
-                    <td>@log.username searched for @log.songname at @log.created_at.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@log.username searched for @log.song_title at @log.created_at.ToString("yyyy-MM-dd HH:mm:ss")</td>
                 </tr>
             }
         </tbody>
