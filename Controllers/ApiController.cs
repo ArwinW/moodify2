@@ -55,13 +55,32 @@ namespace Moodify.Controllers
 
             if (allSongs.Contains(songTitle))
             {
+                var songModel = _database.GetSongByTitle(songTitle);
 
-            } else { 
-            // Prepare the API request URL with the required parameters
-            string requestUrl = $"track.search?q_track={Uri.EscapeDataString(songTitle)}&q_artist={Uri.EscapeDataString(artistName)}&apikey=151f5eaedfddb9c774a269dfe70ff766&f_has_lyrics=true&s_track_rating=desc&page_size=10";
+                songModels = new List<Track>
+    {
+        new Track
+        {
+            TrackName = songModel.SongTitle,
+            AlbumName = songModel.AlbumName,
+            ArtistName = songModel.ArtistName,
+            PrimaryGenres = new PrimaryGenres
+            {
+                MusicGenreList = new List<MusicGenreList> { new MusicGenreList { MusicGenre = new MusicGenre { MusicGenreName = songModel.GenreName } } }
+            }
+        }
+    };
+            }
 
-            // Send the API request
-            HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+
+
+            else
+            {
+                // Prepare the API request URL with the required parameters
+                string requestUrl = $"track.search?q_track={Uri.EscapeDataString(songTitle)}&q_artist={Uri.EscapeDataString(artistName)}&apikey=151f5eaedfddb9c774a269dfe70ff766&f_has_lyrics=true&s_track_rating=desc&page_size=10";
+
+                // Send the API request
+                HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
 
                 // Process the API response
                 if (response.IsSuccessStatusCode)
@@ -88,7 +107,16 @@ namespace Moodify.Controllers
                         },
                     }).ToList();
 
-                    // Fetch related tracks by genre and artist for each track
+               
+
+                    _database.InsertSongs(songModels);
+
+                }
+
+
+
+                
+            }     // Fetch related tracks by genre and artist for each track
                     foreach (var track in songModels)
                     {
                         var genreId = track.PrimaryGenres.MusicGenreList.FirstOrDefault()?.MusicGenre.MusicGenreId;
@@ -115,18 +143,10 @@ namespace Moodify.Controllers
                             correspondingTrack.relatedTracksByArtist = relatedTracksByArtist;
                         }
                     }
-
-                    _database.InsertSongs(songModels);
-                    
-                }
-
                 DateTime currentTime = DateTime.Now;
-
 
                 _database.InsertLog(userId, songTitle, currentTime);
                 return Ok(songModels);
-            }
-
             // Return an empty list if the API request was not successful
             return new List<Track>();
         }

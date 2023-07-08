@@ -243,5 +243,22 @@ namespace Moodify.db
 
         }
 
+        public Song GetSongByTitle(string songTitle)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                var sql = @"
+            SELECT s.name AS SongTitle, a.name AS ArtistName, al.name AS AlbumName, g.naam AS GenreName
+            FROM songs s
+            INNER JOIN artists a ON s.artist_id = a.id
+            INNER JOIN album al ON s.album_id = al.id
+            INNER JOIN genre g ON s.genre_id = g.id
+            WHERE s.name = @SongTitle";
+                return connection.QuerySingleOrDefault<Song>(sql, new { SongTitle = songTitle });
+            }
+        }
+
+
     }
 }
