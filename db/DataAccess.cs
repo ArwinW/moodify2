@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Humanizer.Localisation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moodify.Models;
@@ -118,6 +119,90 @@ namespace Moodify.db
 
             // Other controller methods...
         }
-    }
+        public void InsertSongs(List<Track> songModels)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var songModel in songModels)
+                        {
+                            // Insert the artist if it doesn't exist
+                            var artistSql = @"INSERT INTO artists (name)
+                                      SELECT @ArtistName
+                                      FROM dual
+                                      WHERE NOT EXISTS (
+                                          SELECT 1 FROM artists WHERE name = @ArtistName
+                                      );";
+                            var artistParams = new { ArtistName = songModel.ArtistName ?? "onbekend" };
+                            connection.Execute(artistSql, artistParams);
+
+                            // Get the artist ID
+                            var artistIdSql = "SELECT id FROM artists WHERE name = @ArtistName;";
+                            var artistId = connection.ExecuteScalar<int>(artistIdSql, artistParams);
+
+                            // Insert the album if it doesn't exist
+                            var albumSql = @"INSERT INTO album (name)
+                                     SELECT @Name
+                                     FROM dual
+                                     WHERE NOT EXISTS (
+                                         SELECT 1 FROM album WHERE name = @Name
+                                     );";
+                            var albumParams = new { Name = songModel.AlbumName ?? "onbekend" };
+                            connection.Execute(albumSql, albumParams);
+
+                            // Get the album ID
+                            var albumIdSql = "SELECT id FROM album WHERE name = @Name;";
+                            var albumId = connection.ExecuteScalar<int>(albumIdSql, albumParams);
+
+                            // Insert the genre if it doesn't exist
+                            var genreSql = @"INSERT INTO genre (naam)
+                                     SELECT @GenreName
+                                     FROM dual
+                                     WHERE NOT EXISTS (
+                                         SELECT 1 FROM genre WHERE naam = @GenreName
+                                     );";
+                            var genreParams = new { GenreName = songModel.PrimaryGenres?.MusicGenreList?.FirstOrDefault()?.MusicGenre?.MusicGenreName ?? "onbekend" };
+                            connection.Execute(genreSql, genreParams);
+
+                            // Get the genre ID
+                            var genreIdSql = "SELECT id FROM genre WHERE naam = @GenreName;";
+                            var genreId = connection.ExecuteScalar<int>(genreIdSql, genreParams);
+
+                            // Insert the song record
+                            var songSql = @"INSERT INTO songs (name, artist_id, album_id, genre_id) 
+                                    SELECT @Name, @ArtistId, @AlbumId, @GenreId
+                                    FROM dual
+                                    WHERE NOT EXISTS (
+                                        SELECT 1 FROM songs WHERE name = @Name
+                                    );";
+
+                            var songParams = new
+                            {
+                                Name = songModel.TrackName,
+                                ArtistId = artistId,
+                                AlbumId = albumId,
+                                GenreId = genreId
+                            };
+
+                            connection.Execute(songSql, songParams, transaction);
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
 
     }
+
+}

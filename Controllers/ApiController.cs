@@ -107,6 +107,7 @@ namespace Moodify.Controllers
                 }
 
                 //_database.InsertLog(songModels.TrackId, HttpContext);
+                _database.InsertSongs(songModels);
                 return Ok(songModels);
 
             }
