@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Moodify.Models;
 using System.Linq;
+using Org.BouncyCastle.Utilities;
 
 namespace Moodify.Controllers
 {
@@ -105,7 +106,9 @@ namespace Moodify.Controllers
                     }
                 }
 
-                _database.InsertLog(songModels.TrackId, HttpContext);
+                //_database.InsertLog(songModels.TrackId, HttpContext);
+                return Ok(songModels);
+
             }
 
             // Return an empty list if the API request was not successful
